@@ -106,8 +106,6 @@ void FixToolWorker(FixToolWorkerArgs& args) {
     RewriteInitialState(snapshot.value(), &args.counters);
     FixupSnapshotOptions options;
     options.x86_filter_split_lock = args.options->x86_filter_split_lock;
-    options.x86_filter_vsyscall_region_access =
-        args.options->x86_filter_vsyscall_region_access;
     options.filter_memory_access = args.options->filter_memory_access;
     options.enforce_fuzzing_config = args.options->enforce_fuzzing_config;
     options.x86_filter_non_canonical_evex_sp =

@@ -87,6 +87,11 @@ accumulate and report any failures produced by the individual runner processes.
 See [this file](https://github.com/google/silifuzz/blob/main/util/platform.h) for the
 list of supported microarchitectures.
 
+SiliFuzz runs on x86_64 and aarch64 Linux systems. It has been tested with
+Linux kernel versions 5.x and 6.x. There is no guarantee that it is compatible
+with older kernel versions. Legacy vsyscall ABI must be turned off to avoid
+false positives.
+
 ## Trophies
 
 A non-exhaustive list of bugs and defects SiliFuzz has found.

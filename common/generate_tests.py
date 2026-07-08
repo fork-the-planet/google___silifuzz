@@ -509,16 +509,6 @@ xor %rdi, %rdi
 syscall
 """,
   )
-  b.snapshot(
-      name="VSyscallRegionAccess",
-      arch=X86_64,
-      src="""
-// Beginning of vsycall region
-movq $0xffffffffff600000, %rax
-// This may fault if legacy vsyscall API is not configured in kernel.
-movq (%rax), %rbx
-""",
-  )
 
   b.snapshot(
       name="HasUnobservableNondeterministicInsn",

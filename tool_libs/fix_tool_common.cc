@@ -46,8 +46,6 @@ absl::StatusOr<Snapshot> RemakeAndVerify(const Snapshot& snapshot,
                                          const FixupSnapshotOptions& options) {
   MakingConfig config = MakingConfig::Default(RunnerLocation());
   config.trace.x86_filter_split_lock = options.x86_filter_split_lock;
-  config.trace.x86_filter_vsyscall_region_access =
-      options.x86_filter_vsyscall_region_access;
   config.trace.filter_memory_access = options.filter_memory_access;
   config.enforce_fuzzing_config = options.enforce_fuzzing_config;
   config.trace.x86_filter_non_canonical_evex_sp =

@@ -110,11 +110,6 @@ struct FixupSnapshotOptions {
   // x86-only and has no effect on other platforms.
   bool x86_filter_split_lock = false;
 
-  // If true, snapshots containing instructions that access vsyscall memory
-  // region are filtered by FixupSnapshot. This option is x86-only and has no
-  // effect on other platforms.
-  bool x86_filter_vsyscall_region_access = false;
-
   // If true, snapshots containing instructions that access memory are filtered
   // by FixupSnapshot. Note that the snap exit instruction is exempted. This
   // option is x86-only currently and has no effect on other platforms.

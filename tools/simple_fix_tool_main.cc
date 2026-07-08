@@ -48,8 +48,9 @@ ABSL_FLAG(bool, x86_filter_split_lock, true,
           "On x86, filter snaps with lock instructions accessing memory across "
           "cache line boundaries.");
 
-ABSL_FLAG(bool, x86_filter_vsyscall_region_access, true,
-          "On x86, filter snaps with memory accesses to vsyscall region.");
+ABSL_RETIRED_FLAG(
+    bool, x86_filter_vsyscall_region_access, true,
+    "On x86, filter snaps with memory accesses to vsyscall region.");
 
 ABSL_FLAG(bool, filter_memory_access, false,
           "Filter snaps with memory accesses Currently x86-only.");
@@ -89,8 +90,6 @@ int SimpleFixToolMain(int argc, char* argv[]) {
       absl::GetFlag(FLAGS_num_partitioning_iterations);
   options.parallelism = absl::GetFlag(FLAGS_parallelism);
   options.x86_filter_split_lock = absl::GetFlag(FLAGS_x86_filter_split_lock);
-  options.x86_filter_vsyscall_region_access =
-      absl::GetFlag(FLAGS_x86_filter_vsyscall_region_access);
   options.filter_memory_access = absl::GetFlag(FLAGS_filter_memory_access);
   options.enforce_fuzzing_config = absl::GetFlag(FLAGS_enforce_fuzzing_config);
   options.x86_filter_non_canonical_evex_sp =

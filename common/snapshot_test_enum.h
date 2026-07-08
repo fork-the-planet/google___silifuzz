@@ -107,9 +107,6 @@ enum class TestSnapshot {
   // Snapshot that calls _exit_group(0)
   kExitGroup,
 
-  // Snapshot that accesses VSyscall memory region
-  kVSyscallRegionAccess,
-
   // Contains a non-deterministic instruction (e.g. RDRAND) but the result
   // is not observable so this will replay deterministically.
   kHasUnobservableNondeterministicInsn,
@@ -176,7 +173,6 @@ inline constexpr const char* EnumNameMap<TestSnapshot>[static_cast<int>(
     "kSplitLock",
     "kSetThreeRegisters",
     "kExitGroup",
-    "kVsyscallRegionAccess",
     "kHasNondeterministicInsn",
     "kUalignedExitingStackPointer",
     "kFuzzingConfigNonconformance",

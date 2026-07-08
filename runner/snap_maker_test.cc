@@ -29,7 +29,6 @@
 #include "./util/checks.h"
 #include "./util/testing/status_macros.h"
 #include "./util/testing/status_matchers.h"
-#include "./util/testing/vsyscall.h"
 
 namespace silifuzz {
 namespace {
@@ -114,48 +113,6 @@ TEST(SnapMaker, ExitGroup) {
               StatusIs(absl::StatusCode::kInternal,
                        HasSubstr("Unlikely: snapshot kExitGroup had an "
                                  "undefined end state yet ran successfully")));
-}
-
-TEST(SnapMaker, VSyscallRegionAccess) {
-#if !defined(__x86_64__)
-  GTEST_SKIP()
-      << "VSyscall region access detection implemented only on x86_64.";
-#endif
-  // Unfortunately this test depends on whether vsyscall is configured in
-  // the Linux kernel. If it is configured, fixing will succeed.  Otherwise it
-  // will fail when the runner tries to map a new page in the vsyscall region.
-  const auto vsyscallRegionAccessSnap =
-      MakeSnapRunnerTestSnapshot<Host>(TestSnapshot::kVSyscallRegionAccess);
-  SnapMaker::Options options = DefaultSnapMakerOptionsForTest();
-  TraceOptions trace_options;
-  trace_options.x86_filter_vsyscall_region_access = false;
-  auto result_or =
-      FixSnapshotInTest(vsyscallRegionAccessSnap, options, trace_options);
-  const std::string kSegvErrorMsg =
-      "CannotAddMemory isn't Snap-compatible. Endpoint = "
-      "{SIG_SEGV/SEGV_CANT_READ}";
-  ASSERT_OK_AND_ASSIGN(const bool vsyscall_region_readable,
-                       VSyscallRegionReadable());
-  if (vsyscall_region_readable) {
-    EXPECT_THAT(result_or, IsOk());
-  } else {
-    EXPECT_THAT(result_or,
-                StatusIs(absl::StatusCode::kInternal, kSegvErrorMsg));
-  }
-
-  trace_options.x86_filter_vsyscall_region_access = true;
-  result_or =
-      FixSnapshotInTest(vsyscallRegionAccessSnap, options, trace_options);
-
-  // If vsyscall is configured, we will get an error from the tracer, otherwise
-  // we will get an error from the runner.
-  if (vsyscall_region_readable) {
-    EXPECT_THAT(result_or, StatusIs(absl::StatusCode::kInternal,
-                                    HasSubstr("May access vsyscall region")));
-  } else {
-    EXPECT_THAT(result_or, StatusIs(absl::StatusCode::kInternal,
-                                    HasSubstr(kSegvErrorMsg)));
-  }
 }
 
 TEST(SnapMaker, MemoryAccess) {

@@ -50,10 +50,6 @@ struct SimpleFixToolOptions {
   // across cache line boundary. This has no effect on platforms other than x86.
   bool x86_filter_split_lock = true;
 
-  // If true, tracer injects a signal when an instruction accesses memory in
-  // vsyscall memory region of Linux. This has no effect on non-x86 platforms.
-  bool x86_filter_vsyscall_region_access = true;
-
   // If true, tracer injects a signal when an instruction accesses memory. This
   // has no effect on non-x86 platforms.
   bool filter_memory_access = false;

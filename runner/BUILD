@@ -436,7 +436,6 @@ cc_test(
         "@silifuzz//util:checks",
         "@silifuzz//util/testing:status_macros",
         "@silifuzz//util/testing:status_matchers",
-        "@silifuzz//util/testing:vsyscall",
         "@abseil-cpp//absl/status",
         "@abseil-cpp//absl/status:statusor",
         "@googletest//:gtest_main",

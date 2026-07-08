@@ -87,26 +87,6 @@ DisassemblingSnapTracer::SnapshotStepper::StepInstruction(
         return HarnessTracer::kInjectSigusr1;
       }
     }
-    if (options_.x86_filter_vsyscall_region_access) {
-      constexpr uintptr_t kVSyscallRegionAddress = 0xffffffffff600000ULL;
-      constexpr uintptr_t kVSyscallRegionSize = 0x800000;
-      absl::StatusOr<bool> may_access_vsyscall_region_or =
-          insn_or->may_access_region(regs, kVSyscallRegionAddress,
-                                     kVSyscallRegionSize);
-      if (!may_access_vsyscall_region_or.ok()) {
-        // We cannot determine if instruction accesses the legacy vsyscall
-        // region because of an internal error in may_access_region(). Abort
-        // tracing.
-        trace_result_.early_termination_reason = absl::StrCat(
-            "may_access_region() failed for insn ", insn_or->mnemonic());
-        return HarnessTracer::kInjectSigusr1;
-      }
-      if (may_access_vsyscall_region_or.value()) {
-        trace_result_.early_termination_reason =
-            absl::StrCat("May access vsyscall region ", insn_or->mnemonic());
-        return HarnessTracer::kInjectSigusr1;
-      }
-    }
     if (options_.filter_memory_access && insn_or->may_access_memory()) {
       // We need to check if this is the ending address because on the x86,
       // the exit sequence is an indirect call.
