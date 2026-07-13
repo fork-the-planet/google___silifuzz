@@ -22,6 +22,7 @@
   // Set x25 to point to FPRegs and x24 to point to GRegs.
   ldp x25, x24, [x0, #0]
 
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
   // Clear additional registers (e.g. SVE) that do not need to be restored from
   // ucontext. We do this before restoring the floating point registers because
   // the bottom 128-bits of the SVE z registers are shared with their
@@ -43,7 +44,10 @@
   msr fpsr, x0
   // TODO conditional fpcr restore to avoid unnecessary stalls.
   msr fpcr, x1
-  // x25 is free after restoring FPRegs.
+#else
+  // Skip FPRegs
+  add x25, x25, #528
+#endif
 
   ldp x0, x1, [x24], #16
   // We still need x0 and x1 as scratch registers, so save the final values for

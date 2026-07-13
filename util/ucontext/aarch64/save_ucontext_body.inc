@@ -41,6 +41,7 @@
   // Set the data pointer to the start of the context.
   mov x24, x0
 
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
   // Save the floating point data registers.
   st1 {v0.2d, v1.2d, v2.2d, v3.2d}, [x24], #64
   st1 {v4.2d, v5.2d, v6.2d, v7.2d}, [x24], #64
@@ -55,6 +56,13 @@
   mrs x0, fpsr
   mrs x1, fpcr
   stp x0, x1, [x24], #16
+#else
+  // Skip FP registers in ucontext to keep layout compatibility.
+  // v0-v31 takes 32 * 16 = 512 bytes.
+  // fpsr/fpcr takes 16 bytes.
+  // Total 528 bytes.
+  add x24, x24, #528
+#endif
 
   // Save the original x0 and x1.
   ldp x0, x1, [sp]

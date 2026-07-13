@@ -32,6 +32,13 @@ load("@rules_cc//cc:cc_test.bzl", "cc_test")
 # Disable vector instructions on x86 inside runner
 X86_NO_VECTOR_INSN_COPTS = ["-mno-mmx", "-mno-sse", "-mno-avx"]
 
+AARCH64_INTEGER_ONLY_COPTS = ["-mgeneral-regs-only"]
+
+INTEGER_INSTRUCTIONS_ONLY_COPTS = select({
+    "@silifuzz//build_defs:integer_instructions_only_aarch64": AARCH64_INTEGER_ONLY_COPTS,
+    "//conditions:default": [],
+})
+
 NOLIBC_COPTS = [
     "-fno-exceptions",  # just to make sure (google3-default)
     "-fno-rtti",  # reduced size/deps
@@ -41,7 +48,7 @@ NOLIBC_COPTS = [
     # of the experiment in qpool.
     # "@silifuzz//build_defs/platform:x86_64": X86_NO_VECTOR_INSN_COPTS,
     "//conditions:default": [],
-})
+}) + INTEGER_INSTRUCTIONS_ONLY_COPTS
 
 NOLIBC_FEATURES = [
     "-use_header_modules",  # incompatible with -fno-rtti
@@ -61,7 +68,12 @@ NOLIBC_STDLIB = [
     "@silifuzz//util:builtins",
 ]
 
-NOLIBC_LOCAL_DEFINES = ["SILIFUZZ_BUILD_FOR_NOLIBC"]
+# Define a macro to disable non-integer instructions.
+# The use of macros here should not be used as justification/precedence for future use of macros.
+NOLIBC_LOCAL_DEFINES = ["SILIFUZZ_BUILD_FOR_NOLIBC"] + select({
+    "@silifuzz//build_defs:integer_instructions_only_aarch64": ["SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY"],
+    "//conditions:default": [],
+})
 
 NOLIBC_DEFAULT_MALLOC = "@bazel_tools//tools/cpp:malloc"
 

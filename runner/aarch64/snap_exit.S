@@ -85,6 +85,7 @@ SnapExitImpl:
   # we are not (yet) going through the motions to save them.
   bl SaveUContextNoSyscalls
 
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
   # Point x0 to the buffer for additional registers currently not handled by
   # SaveUContextNoSyscalls.
   adrp x0, snap_exit_register_group_io_buffer
@@ -92,6 +93,7 @@ SnapExitImpl:
 
   # Save these additional registers (in order to calculate a checksum).
   bl SaveRegisterGroupsToBuffer
+#endif
 
   # Jump to RunnerReentry(x0, x30, pc, sp)
   # We're defering fixup of the incorrect registers to C because it avoids a

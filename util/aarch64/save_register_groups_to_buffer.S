@@ -36,6 +36,7 @@
 // to avoid the cost of calling and returning.
 //
 SaveRegisterGroupsToBuffer:
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
         // Save contents of x19 because we want to use it in this function.
         // Save return address (x30).
         stp     x19, x30, [sp, #-16]!
@@ -60,4 +61,7 @@ Exit:
         // Restore x19 and return address.
         ldp     x19, x30, [sp], #16
         ret
+#else
+        ret
+#endif
         .size   SaveRegisterGroupsToBuffer, .-SaveRegisterGroupsToBuffer

@@ -599,10 +599,17 @@ RunSnapOutcome EndSpotToOutcome(const Snap<Host>& snap,
     return RunSnapOutcome::kExecutionMisbehave;
   }
   // Verify register state.
+#if defined(SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY)
+  if (!MemEqT(*end_spot.gregs, *snap.end_state_registers.gregs)) {
+    return RunSnapOutcome::kRegisterStateMismatch;
+  }
+#else
   if (!MemEqT(*end_spot.gregs, *snap.end_state_registers.gregs) ||
       !MemEqT(*end_spot.fpregs, *snap.end_state_registers.fpregs)) {
     return RunSnapOutcome::kRegisterStateMismatch;
   }
+#endif
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
   // Verify register checksum if there is one in the snap and it references the
   // same register groups.
   RegisterChecksum<Host> snap_checksum = snap.end_state_register_checksum;
@@ -615,6 +622,7 @@ RunSnapOutcome EndSpotToOutcome(const Snap<Host>& snap,
               HexStr(end_spot.register_checksum.checksum));
     return RunSnapOutcome::kRegisterStateMismatch;
   }
+#endif
 
   // Verify writable memory contents after execution.
   for (const auto& memory_bytes : snap.end_state_memory_bytes) {
@@ -781,11 +789,13 @@ const SnapCorpus<Host>* CommonMain(const RunnerMainOptions& options) {
 
   InitSnapExit(&SnapExitImpl);
 
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
   // Initialize register checksumming.
   InitRegisterGroupIO();
   RegisterGroupSet<Host> checksum_register_group =
       GetCurrentPlatformChecksumRegisterGroups();
   snap_exit_register_group_io_buffer.register_groups = checksum_register_group;
+#endif
 
   // Preserve this value because the following logic might synthesize a new
   // SnapCorpus struct.

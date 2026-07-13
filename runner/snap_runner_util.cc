@@ -205,8 +205,12 @@ void RunSnap(const UContextView<Host>& view, const RunnerMainOptions& options,
     // Sanitize gregs and fpregs.
     ZeroOutGRegsPadding(end_spot.gregs);
     ZeroOutFPRegsPadding(end_spot.fpregs);
+#if defined(SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY)
+    end_spot.register_checksum = {};
+#else
     end_spot.register_checksum =
         GetRegisterGroupsChecksum(snap_exit_register_group_io_buffer);
+#endif
   }
 
 #if defined(__x86_64__)

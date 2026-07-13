@@ -15,6 +15,7 @@
 // Utility functions for handling Z, P, and FFR registers used by SVE
 // instructions.
 
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
         .text
 
         // Enable assembling of SVE instructions.
@@ -253,3 +254,4 @@ ClearFfrRegister:
 
         ret
         .size   ClearFfrRegister, .-ClearFfrRegister
+#endif

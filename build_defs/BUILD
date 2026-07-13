@@ -16,10 +16,34 @@
 #   Starlark rules and macros for building SiliFuzz
 
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("//third_party/bazel_skylib/lib:selects.bzl", "selects")
+load("//third_party/bazel_skylib/rules:common_settings.bzl", "bool_flag")
 
 licenses(["notice"])
 
 package(default_visibility = ["//visibility:public"])
+
+# Build with integer instructions only.
+# Currently this is only supported on aarch64.
+bool_flag(
+    name = "integer_instructions_only",
+    build_setting_default = False,
+)
+
+config_setting(
+    name = "integer_instructions_only_config",
+    flag_values = {
+        ":integer_instructions_only": "True",
+    },
+)
+
+selects.config_setting_group(
+    name = "integer_instructions_only_aarch64",
+    match_all = [
+        ":integer_instructions_only_config",
+        "@silifuzz//build_defs/platform:aarch64",
+    ],
+)
 
 bzl_library(
     name = "build_defs",

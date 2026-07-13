@@ -36,6 +36,7 @@
 // is because the V registers share the bottom 128-bits of the Z registers.
 //
 ClearRegisterGroups:
+#ifndef SILIFUZZ_INTEGER_INSTRUCTIONS_ONLY
         // Save x30 (return address) and x9.
         stp     x30, x9, [sp, #-16]!
 
@@ -53,4 +54,7 @@ Exit:
         // Restore x30 (return address) and x9.
         ldp     x30, x9, [sp], #16
         ret
+#else
+        ret
+#endif
         .size   ClearRegisterGroups, .-ClearRegisterGroups
