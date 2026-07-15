@@ -16,8 +16,8 @@
 #   Starlark rules and macros for building SiliFuzz
 
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("//third_party/bazel_skylib/lib:selects.bzl", "selects")
-load("//third_party/bazel_skylib/rules:common_settings.bzl", "bool_flag")
+load("@bazel_skylib//lib:selects.bzl", "selects")
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
 
 licenses(["notice"])
 
